@@ -8,7 +8,11 @@ st.set_page_config(
     layout="wide",
 )
 
-DATA_URL = "sample_csv.csv"
+NYC_OPEN_DATA_URL = (
+    "https://data.cityofnewyork.us/resource/h9gi-nx95.csv"
+    "?$limit=50000"
+)
+DATA_URL = NYC_OPEN_DATA_URL
 
 def _clean_column_names(columns: pd.Index) -> pd.Index:
     """Normalize column names for easier querying."""
@@ -23,7 +27,9 @@ def load_data() -> pd.DataFrame:
 
     # Build a combined datetime column and coerce invalid rows to NaT for safe filtering.
     data["date/time"] = pd.to_datetime(
-        data["crash_date"].str.strip() + " " + data["crash_time"].str.strip(),
+        data["crash_date"].astype(str).str.strip()
+        + " "
+        + data["crash_time"].astype(str).str.strip(),
         errors="coerce",
     )
 
@@ -113,7 +119,14 @@ def render_hourly_histogram(data: pd.DataFrame) -> None:
 
 def main() -> None:
     st.title("NYC Bike Crash Dashboard")
-    st.caption("Explore collisions involving cyclists across New York City")
+    st.caption(
+        "Explore collisions involving cyclists across New York City using public data."
+    )
+    st.markdown(
+        "[Data source: NYC Open Data (Motor Vehicle Collisions - Crashes)]"
+        "(https://data.cityofnewyork.us/Public-Safety/"
+        "Motor-Vehicle-Collisions-Crashes/h9gi-nx95)"
+    )
 
     data_load_state = st.empty()
     data_load_state.info("Loading crash data...")
