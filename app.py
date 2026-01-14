@@ -112,7 +112,7 @@ def render_hourly_histogram(data: pd.DataFrame) -> None:
 
 
 def main() -> None:
-    st.title("NYC Bike Crash Dashboard")
+    st.title("🚲 NYC Bike Crash Dashboard")
     st.caption("Explore collisions involving cyclists across New York City")
 
     data_load_state = st.empty()
@@ -120,11 +120,12 @@ def main() -> None:
     data = load_data()
     data_load_state.success(f"Loaded {len(data):,} rows")
 
-    st.sidebar.header("Filters")
+    st.sidebar.header("📊 Filters")
     filtered = borough_filter(data)
     filtered = cyclists_filter(filtered)
     filtered_by_hour, hour = hour_filter(filtered)
 
+    st.markdown("### 🗺️ Geographic Distribution")
     col1, col2 = st.columns(2)
     with col1:
         render_map(filtered, "All crashes (after filters)")
@@ -132,6 +133,7 @@ def main() -> None:
         render_map(filtered_by_hour, f"Crashes at {hour:02d}:00")
 
     st.markdown("---")
+    st.markdown("### 📈 Analytics")
     col3, col4 = st.columns([2, 1])
     with col3:
         render_hourly_histogram(filtered)
@@ -143,6 +145,14 @@ def main() -> None:
 
     if st.checkbox("Show raw data"):
         st.dataframe(filtered.sort_values("date/time", ascending=False))
+
+    st.markdown("---")
+    st.markdown("""
+    <div style='text-align: center; color: #666; padding: 20px;'>
+        <p>Data visualization of NYC bike crash incidents</p>
+        <p>Use the filters in the sidebar to explore different aspects of the data</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
